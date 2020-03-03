@@ -4,16 +4,21 @@ class Deliveryman extends Model {
   static init(sequelize) {
     super.init(
       {
-        id: Sequelize.INTENGER,
         name: Sequelize.STRING,
         avatar_id: Sequelize.INTEGER,
         email: Sequelize.STRING,
       },
       {
         sequelize,
+        modelName: 'deliverymen',
+        freezeTableName: true, // stops auto-pluralization performed by Sequelize
       }
     );
     return this;
+  }
+
+  static associate(models) {
+    this.belongsTo(models.File, { foreignKey: 'avatar_id', as: 'avatar' });
   }
 }
 
