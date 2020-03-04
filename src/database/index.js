@@ -1,4 +1,5 @@
 import Sequelize from 'sequelize';
+import mongoose from 'mongoose';
 
 import User from '../app/models/User';
 import Recipient from '../app/models/Recipient';
@@ -13,6 +14,7 @@ const models = [User, Recipient, File, Deliveryman, Order];
 class Database {
   constructor() {
     this.init();
+    this.mongo();
   }
 
   // Connects to the databases and loads the models
@@ -22,6 +24,17 @@ class Database {
     models
       .map(model => model.init(this.connection))
       .map(model => model.associate && model.associate(this.connection.models));
+  }
+
+  mongo() {
+    this.mongoConnection = mongoose.connect(
+      'mongodb://192.168.99.100:27017/challenge03',
+      {
+        useNewUrlParser: true,
+        useFindAndModify: true,
+        useUnifiedTopology: true,
+      }
+    );
   }
 }
 
