@@ -70,7 +70,7 @@ class DeliverymanController {
 
     await deliveryman.destroy();
 
-    return res.status(200).json();
+    return res.send();
   }
 }
 
