@@ -10,7 +10,7 @@ class Deliveryman extends Model {
       },
       {
         sequelize,
-        modelName: 'deliverymen',
+        tableName: 'deliverymen',
         freezeTableName: true, // stops auto-pluralization performed by Sequelize
       }
     );
