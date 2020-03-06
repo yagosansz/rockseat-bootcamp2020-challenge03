@@ -4,7 +4,8 @@ import Order from '../models/Order';
 import Recipient from '../models/Recipient';
 import Deliveryman from '../models/Deliveryman';
 
-import Mail from '../../lib/Mail';
+import AddedDeliveryMail from '../jobs/AddedDeliveryMail';
+import Queue from '../../lib/Queue';
 
 class OrderController {
   async index(req, res) {
@@ -39,15 +40,10 @@ class OrderController {
 
     // Sending email to deliveryman to notify that a new delivery has been assgined to him/her
     const formattedDate = format(new Date(), "MMMM dd', 'h':'mm' 'aaaa");
-    await Mail.sendMail({
-      to: `${deliveryman.name} <${deliveryman.email}>`,
-      subject: 'New Delivery',
-      template: 'new_delivery',
-      context: {
-        deliveryman: deliveryman.name,
-        product: order.product,
-        date: formattedDate,
-      },
+    await Queue.add(AddedDeliveryMail.key, {
+      deliveryman,
+      order,
+      formattedDate,
     });
 
     return res.json(order);
