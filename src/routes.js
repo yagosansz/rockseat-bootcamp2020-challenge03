@@ -8,6 +8,8 @@ import RecipientController from './app/controllers/RecipientController';
 import FileController from './app/controllers/FileController';
 import DeliverymanController from './app/controllers/DeliverymanController';
 import OrderController from './app/controllers/OrderController';
+import NotDeliveredController from './app/controllers/NotDeliveredController';
+import DeliveriesController from './app/controllers/DeliveriesController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -17,8 +19,13 @@ const upload = multer(multerConfig);
 // List admins in the database
 routes.get('/admins', AdminController.index);
 
-// Create a session for users trying to authenticate
+// Creates a session for users trying to authenticate
 routes.post('/sessions', SessionController.store);
+
+// Lists incomplete deliveries for a deliveryman
+routes.get('/deliveryman/:id/not-delivered', NotDeliveredController.index);
+// Lists completed deliveries
+routes.get('/deliveryman/:id/deliveries', DeliveriesController.index);
 
 routes.use(authMiddleware);
 
