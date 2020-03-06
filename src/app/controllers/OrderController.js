@@ -1,3 +1,6 @@
+import format from 'date-fns/format';
+
+import Notification from '../schema/NotificationSchema';
 import Order from '../models/Order';
 import Recipient from '../models/Recipient';
 import Deliveryman from '../models/Deliveryman';
@@ -32,6 +35,13 @@ class OrderController {
     }
 
     const order = await Order.create(req.body);
+
+    // Notify deliveryman that a new delivery has been assgined to him (replaice with nodemailer)
+    const formattedDate = format(new Date(), "'at 'MMMM dd', 'h':'mm' 'aaaa");
+    await Notification.create({
+      content: `A new delivery has been assigned to you ${formattedDate} - Product: ${order.product}`,
+      deliveryman: order.deliveryman_id,
+    });
 
     return res.json(order);
   }
