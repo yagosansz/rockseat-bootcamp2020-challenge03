@@ -1,9 +1,10 @@
 import format from 'date-fns/format';
 
-import Notification from '../schema/NotificationSchema';
 import Order from '../models/Order';
 import Recipient from '../models/Recipient';
 import Deliveryman from '../models/Deliveryman';
+
+import Mail from '../../lib/Mail';
 
 class OrderController {
   async index(req, res) {
@@ -22,25 +23,31 @@ class OrderController {
   async store(req, res) {
     const { recipient_id, deliveryman_id } = req.body;
 
-    const recipientExists = await Recipient.findByPk(recipient_id);
+    const recipient = await Recipient.findByPk(recipient_id);
 
-    if (!recipientExists) {
+    if (!recipient) {
       return res.status(400).json({ error: 'Recipient does not exist' });
     }
 
-    const deliverymanExists = await Deliveryman.findByPk(deliveryman_id);
+    const deliveryman = await Deliveryman.findByPk(deliveryman_id);
 
-    if (!deliverymanExists) {
+    if (!deliveryman) {
       return res.status(400).json({ error: 'Deliveryman does not exist' });
     }
 
     const order = await Order.create(req.body);
 
-    // Notify deliveryman that a new delivery has been assgined to him (replaice with nodemailer)
-    const formattedDate = format(new Date(), "'at 'MMMM dd', 'h':'mm' 'aaaa");
-    await Notification.create({
-      content: `A new delivery has been assigned to you ${formattedDate} - Product: ${order.product}`,
-      deliveryman: order.deliveryman_id,
+    // Sending email to deliveryman to notify that a new delivery has been assgined to him/her
+    const formattedDate = format(new Date(), "MMMM dd', 'h':'mm' 'aaaa");
+    await Mail.sendMail({
+      to: `${deliveryman.name} <${deliveryman.email}>`,
+      subject: 'New Delivery',
+      template: 'new_delivery',
+      context: {
+        deliveryman: deliveryman.name,
+        product: order.product,
+        date: formattedDate,
+      },
     });
 
     return res.json(order);
