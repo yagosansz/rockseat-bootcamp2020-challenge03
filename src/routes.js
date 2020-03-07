@@ -10,6 +10,7 @@ import DeliverymanController from './app/controllers/DeliverymanController';
 import OrderController from './app/controllers/OrderController';
 import NotDeliveredController from './app/controllers/NotDeliveredController';
 import DeliveriesController from './app/controllers/DeliveriesController';
+import DeliveryStartController from './app/controllers/DeliveryStartController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -26,6 +27,12 @@ routes.post('/sessions', SessionController.store);
 routes.get('/deliveryman/:id/not-delivered', NotDeliveredController.index);
 // Lists completed deliveries
 routes.get('/deliveryman/:id/deliveries', DeliveriesController.index);
+
+// Updates an order with the pick up date (start_date)
+routes.put(
+  '/deliveryman/:deliveryman_id/start-delivery/:order_id',
+  DeliveryStartController.update
+);
 
 routes.use(authMiddleware);
 
