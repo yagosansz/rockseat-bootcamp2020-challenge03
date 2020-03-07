@@ -5,7 +5,7 @@ class DeliveryProblem extends Model {
     super.init(
       {
         delivery_id: Sequelize.INTEGER,
-        problem: Sequelize.STRING,
+        description: Sequelize.STRING,
       },
       {
         sequelize,
