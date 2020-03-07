@@ -13,6 +13,7 @@ import DeliveriesController from './app/controllers/DeliveriesController';
 import DeliveryStartController from './app/controllers/DeliveryStartController';
 import DeliveryEndController from './app/controllers/DeliveryEndController';
 import DeliveryProblemController from './app/controllers/DeliveryProblemController';
+import CancelDeliveryWithProblemController from './app/controllers/CancelDeliveryWithProblemController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -74,6 +75,12 @@ routes.delete('/orders/:id', OrderController.delete);
 routes.get('/delivery-problems', DeliveryProblemController.index);
 // Lists all problems that have been registered for a delivery/order
 routes.get('/delivery/:id/problems', DeliveryProblemController.show);
+
+// Cancel a delivery that has problem(s)
+routes.put(
+  '/problem/:id/cancel-delivery',
+  CancelDeliveryWithProblemController.edit
+);
 
 // Uploads file to ./tmp/uploads
 routes.post('/files', upload.single('file'), FileController.store);

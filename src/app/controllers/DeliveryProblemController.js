@@ -23,7 +23,7 @@ class DeliveryProblemController {
 
     if (!deliveriesWithProblems.length) {
       return res
-        .status(400)
+        .status(404)
         .json({ error: 'No deliveries with problems were found' });
     }
 
