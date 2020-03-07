@@ -11,6 +11,7 @@ import OrderController from './app/controllers/OrderController';
 import NotDeliveredController from './app/controllers/NotDeliveredController';
 import DeliveriesController from './app/controllers/DeliveriesController';
 import DeliveryStartController from './app/controllers/DeliveryStartController';
+import DeliveryEndController from './app/controllers/DeliveryEndController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -32,6 +33,11 @@ routes.get('/deliveryman/:id/deliveries', DeliveriesController.index);
 routes.put(
   '/deliveryman/:deliveryman_id/start-delivery/:order_id',
   DeliveryStartController.update
+);
+// Updates an order with the end/delivery date (end_date)
+routes.put(
+  '/deliveryman/:deliveryman_id/end-delivery/:order_id',
+  DeliveryEndController.update
 );
 
 routes.use(authMiddleware);
