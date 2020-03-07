@@ -12,6 +12,7 @@ import NotDeliveredController from './app/controllers/NotDeliveredController';
 import DeliveriesController from './app/controllers/DeliveriesController';
 import DeliveryStartController from './app/controllers/DeliveryStartController';
 import DeliveryEndController from './app/controllers/DeliveryEndController';
+import DeliveryProblemController from './app/controllers/DeliveryProblemController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -40,6 +41,9 @@ routes.put(
   DeliveryEndController.update
 );
 
+/* Delivery Problems: routes for deliverymen */
+routes.post('/delivery/:id/problems', DeliveryProblemController.store);
+
 routes.use(authMiddleware);
 
 // Creates a recipient
@@ -64,6 +68,12 @@ routes.post('/orders', OrderController.store);
 routes.put('/orders/:id', OrderController.edit);
 // Deletes an existing order
 routes.delete('/orders/:id', OrderController.delete);
+
+/* Delivery Problems: routes for admin */
+// Lists all deliveries/orders that have a registered problem(s)
+routes.get('/delivery-problems', DeliveryProblemController.index);
+// Lists all problems that have been registered for a delivery/order
+routes.get('/delivery/:id/problems', DeliveryProblemController.show);
 
 // Uploads file to ./tmp/uploads
 routes.post('/files', upload.single('file'), FileController.store);
