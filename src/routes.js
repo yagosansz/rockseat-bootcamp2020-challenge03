@@ -36,7 +36,7 @@ routes.put(
   '/deliveryman/:deliveryman_id/start-delivery/:order_id',
   DeliveryStartController.update
 );
-// Updates an order with the end/delivery date (end_date)
+// Updates an order with the end/delivery date (end_date = date of cancellation => new Date())
 routes.put(
   '/deliveryman/end-delivery',
   upload.single('file'),

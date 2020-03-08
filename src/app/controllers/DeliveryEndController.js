@@ -6,6 +6,10 @@ import File from '../models/File';
 import Order from '../models/Order';
 
 class DeliveryEndController {
+  // Update this method
+  // end_date will be current day's date
+  // deliveryman_id and order_id will go in the query params
+  // file will go in the header as multipart/form-data
   async update(req, res) {
     const schema = Yup.object().shape({
       deliveryman_id: Yup.number().required(),
@@ -62,9 +66,7 @@ class DeliveryEndController {
     }
 
     if (!req.file) {
-      return res
-        .status(401)
-        .json({ error: 'Customer needs to sign to confirm the delivery' });
+      return res.status(401).json({ error: 'Recipient signature not found' });
     }
 
     const { originalname: name, filename: path } = req.file;
@@ -77,7 +79,7 @@ class DeliveryEndController {
     const signature_id = file.id;
     const end_date = new Date();
 
-    await orderDeliverable.update({ signature_id, end_date });
+    await orderDeliverable.update({ end_date, signature_id });
 
     return res.json(orderDeliverable);
   }
