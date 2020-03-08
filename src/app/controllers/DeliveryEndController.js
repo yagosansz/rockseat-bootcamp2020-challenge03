@@ -1,9 +1,9 @@
+import { isAfter, parseISO } from 'date-fns';
 import { Op } from 'sequelize';
 import * as Yup from 'yup';
 
-import Deliveryman from '../models/Deliveryman';
-import File from '../models/File';
 import Order from '../models/Order';
+import Deliveryman from '../models/Deliveryman';
 
 class DeliveryEndController {
   async update(req, res) {
@@ -12,11 +12,12 @@ class DeliveryEndController {
       order_id: Yup.number().required(),
     });
 
-    if (!(await schema.isValid(req.query))) {
+    if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation failed' });
     }
 
-    const { deliveryman_id, order_id } = req.query;
+    const { deliveryman_id, order_id } = req.params;
+    const { end_date } = req.body;
 
     const deliverymanExists = await Deliveryman.findByPk(deliveryman_id);
 
@@ -61,21 +62,13 @@ class DeliveryEndController {
       });
     }
 
-    if (!req.file) {
-      return res.status(401).json({ error: 'Recipient signature not found' });
+    if (!isAfter(parseISO(end_date), orderDeliverable.start_date)) {
+      return res.status(400).json({
+        error: 'Delivery end date needs to be after current date',
+      });
     }
 
-    const { originalname: name, filename: path } = req.file;
-
-    const file = await File.create({
-      name,
-      path,
-    });
-
-    const signature_id = file.id;
-    const end_date = new Date();
-
-    await orderDeliverable.update({ end_date, signature_id });
+    await orderDeliverable.update({ end_date });
 
     return res.json(orderDeliverable);
   }
