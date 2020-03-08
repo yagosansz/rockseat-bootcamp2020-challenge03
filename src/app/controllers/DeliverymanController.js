@@ -1,3 +1,5 @@
+import * as Yup from 'yup';
+
 import Deliveryman from '../models/Deliveryman';
 import File from '../models/File';
 
@@ -18,6 +20,16 @@ class DeliverymanController {
   }
 
   async store(req, res) {
+    const schema = Yup.object().shape({
+      email: Yup.string()
+        .email()
+        .required(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation failed' });
+    }
+
     const { email } = req.body;
 
     const deliverymanExists = await Deliveryman.findOne({ where: { email } });
@@ -32,6 +44,16 @@ class DeliverymanController {
   }
 
   async edit(req, res) {
+    const schema = Yup.object().shape({
+      email: Yup.string()
+        .email()
+        .required(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation failed' });
+    }
+
     const { id } = req.params;
     const { email } = req.body;
 

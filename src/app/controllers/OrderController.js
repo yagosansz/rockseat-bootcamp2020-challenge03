@@ -1,4 +1,5 @@
 import format from 'date-fns/format';
+import * as Yup from 'yup';
 
 import Order from '../models/Order';
 import Recipient from '../models/Recipient';
@@ -9,8 +10,17 @@ import Queue from '../../lib/Queue';
 
 class OrderController {
   async index(req, res) {
-    // needs to edit findAll to display more data about recipient and deliveryman
-    const orders = await Order.findAll({});
+    const orders = await Order.findAll({
+      attributes: [
+        'id',
+        'recipient_id',
+        'deliveryman_id',
+        'product',
+        'canceled_at',
+        'start_date',
+        'end_date',
+      ],
+    });
 
     if (!orders.length) {
       return res
@@ -22,6 +32,15 @@ class OrderController {
   }
 
   async store(req, res) {
+    const schema = Yup.object().shape({
+      recipient_id: Yup.number().required(),
+      deliveryman_id: Yup.number().required(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation failed' });
+    }
+
     const { recipient_id, deliveryman_id } = req.body;
 
     const recipient = await Recipient.findByPk(recipient_id);
@@ -50,6 +69,15 @@ class OrderController {
   }
 
   async edit(req, res) {
+    const schema = Yup.object().shape({
+      recipient_id: Yup.number().required(),
+      deliveryman_id: Yup.number().required(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation failed' });
+    }
+
     const { id } = req.params;
     const { recipient_id, deliveryman_id } = req.body;
 

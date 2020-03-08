@@ -7,12 +7,22 @@ import {
   setSeconds,
 } from 'date-fns';
 import { Op } from 'sequelize';
+import * as Yup from 'yup';
 
 import Order from '../models/Order';
 import Deliveryman from '../models/Deliveryman';
 
 class DeliveryStartController {
   async update(req, res) {
+    const schema = Yup.object.shape({
+      deliveryman_id: Yup.number().required(),
+      order_id: Yup.number().required(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation failed' });
+    }
+
     const { deliveryman_id, order_id } = req.params;
     const { start_date } = req.body;
 
